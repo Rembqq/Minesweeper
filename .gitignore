@@ -1,0 +1,10 @@
+# file: ~/.gitignore_global
+.DS_Store
+.idea
+*.iml
+out
+src/minesweeper_tutorial/Game.java
+src/minesweeper_tutorial/Minesweeper.java
+src/minesweeper_tutorial/Space.java
+src/minesweeper_tutorial/Board.java
+src/minesweeper_tutorial/imgs
