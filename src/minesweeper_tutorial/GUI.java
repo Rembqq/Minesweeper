@@ -6,11 +6,21 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.*;
 
-public class GUI extends JFrame{
+public class GUI extends JFrame {
     int margins = 8;
     int top_padding = 30;
     int mx = 0;
     int my = 0;
+
+    Random rand = new Random();
+
+    //arrays
+    boolean[][] contains_mine = new boolean[16][9];
+    int[][] nearby_mines = new int[16][9];
+    boolean[][] revealed = new boolean[16][9];
+    boolean[][] flagged = new boolean[16][9];
+
+    int initial_mines = 70;
 
     public GUI()
     {
@@ -21,6 +31,24 @@ public class GUI extends JFrame{
         Dimension dimension = toolkit.getScreenSize();
         this.setBounds(dimension.width/2 - 600, dimension.height/2 - 400, 1296, 839);
         this.setResizable(false);
+
+        int marked_mines = 0;
+        for(int i = 0; i < 16; ++i)
+        {
+            for(int j = 0; j < 9; ++j)
+            {
+                /*if(rand.nextInt(100)  < 20)
+                {
+                    contains_mine[i][j] = true;
+                }
+                else
+                {
+
+                }*/
+                contains_mine[i][j] = (rand.nextInt(16 * 9)  <= initial_mines - marked_mines);
+                if(contains_mine[i][j]) {marked_mines++;}
+            }
+        }
 
         Board board = new Board();
         this.setContentPane(board);
@@ -79,7 +107,10 @@ public class GUI extends JFrame{
     {
         @Override
         public void mouseClicked(MouseEvent e) {
-            System.out.println("Clicked");
+            if(inBoxX() != -1 && inBoxY() != -1)
+            {
+                System.out.println("Row: " + inBoxY() + ", Col: " + inBoxX());
+            }
         }
 
         @Override
@@ -101,6 +132,33 @@ public class GUI extends JFrame{
         public void mouseExited(MouseEvent e) {
 
         }
+
+        public int inBoxX()
+        {
+            for(int i = 0; i < 16; ++i)
+            {
+                if(mx >= margins * 2 + 80 * i &&
+                        mx <= 80*(i+1))
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        public int inBoxY()
+        {
+            for(int j = 0; j < 9; ++j)
+            {
+                if(my >= 80 + margins + 80 * j + top_padding &&
+                        my <= top_padding + 80 + 80*(j+1) - margins)
+                {
+                    return j;
+                }
+            }
+            return -1;
+        }
+
     }
 
 
