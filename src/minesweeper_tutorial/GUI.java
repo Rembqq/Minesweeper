@@ -45,8 +45,29 @@ public class GUI extends JFrame {
                 {
 
                 }*/
-                contains_mine[i][j] = (rand.nextInt(16 * 9)  <= initial_mines - marked_mines);
+                contains_mine[i][j] = (rand.nextInt(16 * 9)  < initial_mines - marked_mines);
                 if(contains_mine[i][j]) {marked_mines++;}
+                revealed[i][j] = false;
+                nearby_mines[i][j] = 0;
+            }
+        }
+
+        for(int i = 0; i < 16; ++i)
+        {
+            for(int j = 0; j < 9; ++j)
+            {
+
+                for(int m = i - 1; m <= i + 1; ++m)
+                {
+                    for(int n = j - 1; n <= j + 1; ++n)
+                    {
+                        if (n == -1 || m == -1 || m == 16 || n == 9 || (i == m && j == n) ) { continue;}
+                        if(contains_mine[m][n])
+                        {
+                            nearby_mines[i][j]++;
+                        }
+                    }
+                }
             }
         }
 
@@ -73,8 +94,10 @@ public class GUI extends JFrame {
                 for(int j = 0; j < 9; ++j)
                 {
                     g.setColor(Color.PINK);
-                    //if(mx % 80 >= margins * 2 && my >= 80 + 80 * j + margins && my <= 80 + 80*(j+1) - margins
-                    // /*&& mx % 80 < 80 - margins + 10*/)
+                    if(contains_mine[i][j])
+                    {
+                        g.setColor(Color.YELLOW);
+                    }
                     if(mx >= margins * 2 + 80 * i &&
                             mx <= 80*(i+1) &&
                             my >= 80 + margins + 80 * j + top_padding &&
@@ -107,10 +130,18 @@ public class GUI extends JFrame {
     {
         @Override
         public void mouseClicked(MouseEvent e) {
-            if(inBoxX() != -1 && inBoxY() != -1)
+            int row = inBoxY();
+            int col = inBoxX();
+            if (row != -1 && col != -1)
+            {
+                revealed[inBoxX()][inBoxY()] = true;
+                System.out.println("Row: " + row + ", Col: " + col + " Neighbour mines: " + nearby_mines[inBoxX()][inBoxY()]);
+            }
+
+            /*if(row != -1 && col != -1)
             {
                 System.out.println("Row: " + inBoxY() + ", Col: " + inBoxX());
-            }
+            }*/
         }
 
         @Override
@@ -125,7 +156,7 @@ public class GUI extends JFrame {
 
         @Override
         public void mouseEntered(MouseEvent e) {
-
+            
         }
 
         @Override
@@ -157,6 +188,16 @@ public class GUI extends JFrame {
                 }
             }
             return -1;
+        }
+
+        public boolean isNeighbour(int main_box_X, int main_box_Y, int side_box_X, int side_box_Y)
+        {
+
+            if(Math.abs(main_box_X - side_box_X) < 2 && Math.abs(main_box_Y - side_box_Y) < 2 && contains_mine[side_box_X][side_box_Y])
+            {
+                return true;
+            }
+            return false;
         }
 
     }
