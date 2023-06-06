@@ -20,7 +20,7 @@ public class GUI extends JFrame {
     boolean[][] revealed = new boolean[16][9];
     boolean[][] flagged = new boolean[16][9];
 
-    int initial_mines = 70;
+    int initial_mines = 50;
 
     public GUI()
     {
@@ -33,20 +33,15 @@ public class GUI extends JFrame {
         this.setResizable(false);
 
         int marked_mines = 0;
+        int decreased_chance = 0;
         for(int i = 0; i < 16; ++i)
         {
             for(int j = 0; j < 9; ++j)
             {
-                /*if(rand.nextInt(100)  < 20)
-                {
-                    contains_mine[i][j] = true;
-                }
-                else
-                {
-
-                }*/
-                contains_mine[i][j] = (rand.nextInt(16 * 9)  < initial_mines - marked_mines);
+                // calculating left bomb_chance
+                contains_mine[i][j] = (rand.nextInt(16 * 9 - decreased_chance)  < initial_mines - marked_mines);
                 if(contains_mine[i][j]) {marked_mines++;}
+                decreased_chance++;
                 revealed[i][j] = false;
                 nearby_mines[i][j] = 0;
             }
@@ -93,19 +88,43 @@ public class GUI extends JFrame {
             {
                 for(int j = 0; j < 9; ++j)
                 {
-                    g.setColor(Color.PINK);
+                    g.setColor(Color.GRAY);
                     if(contains_mine[i][j])
                     {
                         g.setColor(Color.YELLOW);
+                    }
+                    if(revealed[i][j])
+                    {
+                        g.setColor(Color.white);
+                        if(contains_mine[i][j])
+                        {
+                            g.setColor(Color.red);
+                        }
                     }
                     if(mx >= margins * 2 + 80 * i &&
                             mx <= 80*(i+1) &&
                             my >= 80 + margins + 80 * j + top_padding &&
                             my <= top_padding + 80 + 80*(j+1) - margins)
                     {
-                        g.setColor(Color.GRAY);
+                        g.setColor(Color.lightGray);
                     }
+
                     g.fillRect(margins + 80 * i, margins + 80 + 80 * j, 80 - margins * 2, 80 - margins * 2);
+
+                    //again revealed[i][j] as we can't change a colour from a single condition
+                    if(revealed[i][j])
+                    {
+                        g.setColor(Color.black);
+                        if(!contains_mine[i][j])
+                        {
+                            g.setFont(new Font("Tahoma", Font.BOLD, 40));
+                            g.drawString(Integer.toString(nearby_mines[i][j]), 20 + margins + 80 * i, top_padding + 25 + 80 * (j+1));
+                        }
+                        else {
+                            g.fillOval(i * 80 + margins + 11, j * 80 + 80 + top_padding - 10, 40, 40);
+                        }
+                    }
+
                 }
             }
         }
@@ -122,7 +141,7 @@ public class GUI extends JFrame {
         public void mouseMoved(MouseEvent e) {
             mx = e.getX();
             my = e.getY();
-            System.out.println("X: " + mx +  ", Y: " + my);
+            //System.out.println("X: " + mx +  ", Y: " + my);
         }
     }
 
