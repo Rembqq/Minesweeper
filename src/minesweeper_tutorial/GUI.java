@@ -9,8 +9,13 @@ import java.util.*;
 public class GUI extends JFrame {
     int margins = 5;
     int top_padding = 30;
-    int mx = 0;
-    int my = 0;
+    public int mx = 0;
+    public int my = 0;
+
+    public int smiley_x = 605;
+    public int smiley_y = 5;
+
+    public boolean happy_face = false;
 
     Random rand = new Random();
 
@@ -79,52 +84,44 @@ public class GUI extends JFrame {
         this.addMouseListener(click);
     }
 
-    public class Board extends JPanel
-    {
-        public void paintComponent(Graphics g)
-        {
+    public class Board extends JPanel {
+        public void paintComponent(Graphics g) {
             g.setColor(Color.darkGray);
             g.fillRect(0, 0, 1296, 829);
             g.setColor(Color.GRAY);
 
-            for(int i = 0; i < 16; ++i)
-            {
-                for(int j = 0; j < 9; ++j)
-                {
+            for (int i = 0; i < 16; ++i) {
+                for (int j = 0; j < 9; ++j) {
                     g.setColor(Color.GRAY);
-                    if(contains_mine[i][j])
-                    {
+                    if (contains_mine[i][j]) {
                         g.setColor(new Color(176, 108, 40));
                     }
-                    if(revealed[i][j])
-                    {
+                    /*if (contains_mine[i][j]) {
+                        g.setColor(new Color(245, 29, 90));
+                    }*/
+                    if (revealed[i][j]) {
                         g.setColor(new Color(175, 186, 189));
-                        if(contains_mine[i][j])
-                        {
-                            g.setColor(new Color(176, 108, 40));
+                        if (contains_mine[i][j]) {
+                            g.setColor(new Color(245, 29, 90));
                         }
                     }
-                    if(mx >= margins * 2 + 80 * i &&
-                            mx <= 80*(i+1) &&
+                    if (mx >= margins * 2 + 80 * i &&
+                            mx <= 80 * (i + 1) &&
                             my >= 80 + margins + 80 * j + top_padding &&
-                            my <= top_padding + 80 + 80*(j+1) - margins)
-                    {
+                            my <= top_padding + 80 + 80 * (j + 1) - margins) {
                         g.setColor(Color.lightGray);
                     }
 
                     g.fillRect(margins + 80 * i, margins + 80 + 80 * j, 80 - margins * 2, 80 - margins * 2);
 
                     //again revealed[i][j] as we can't change a colour from a single condition
-                    if(revealed[i][j])
-                    {
+                    if (revealed[i][j]) {
 
-                        if(!contains_mine[i][j] && nearby_mines[i][j] != 0)
-                        {
+                        if (!contains_mine[i][j] && nearby_mines[i][j] != 0) {
                             g.setColor(num_colours[nearby_mines[i][j] - 1]);
                             g.setFont(new Font("Tahoma", Font.BOLD, 45));
-                            g.drawString(Integer.toString(nearby_mines[i][j]), 18 + margins + 80 * i, top_padding + margins + 22 + 80 * (j+1));
-                        }
-                        else {
+                            g.drawString(Integer.toString(nearby_mines[i][j]), 18 + margins + 80 * i, top_padding + margins + 22 + 80 * (j + 1));
+                        } else {
                             g.setColor(Color.BLACK);
                             g.fillOval(i * 80 + margins + 12, j * 80 + 80 + top_padding - 10, 40, 40);
                             g.fillRect(i * 80 + margins + 30, j * 80 + 80 + top_padding - 17, 4, 56);
@@ -134,8 +131,34 @@ public class GUI extends JFrame {
 
                 }
             }
+
+            // smiley face picture
+
+            g.setColor(Color.YELLOW);
+            g.fillOval(smiley_x, smiley_y, 70, 70);
+            g.setColor(Color.GRAY);
+            g.fillRect(smiley_x + 19, smiley_y + 22, 8, 8);
+            g.fillRect(smiley_x + 43, smiley_y + 22, 8, 8);
+            if(happy_face)
+            {
+                g.fillRect(smiley_x + 15, smiley_y + 45, 5, 5);
+                g.fillRect(smiley_x + 50, smiley_y + 45, 5, 5);
+                g.fillRect(smiley_x + 20, smiley_y + 50, 5, 5);
+                g.fillRect(smiley_x + 45, smiley_y + 50, 5, 5);
+                g.fillRect(smiley_x + 25, smiley_y + 55, 20, 4);
+            }
+            else
+            {
+                g.fillRect(smiley_x + 15, smiley_y + 50, 5, 5);
+                g.fillRect(smiley_x + 50, smiley_y + 50, 5, 5);
+                g.fillRect(smiley_x + 20, smiley_y + 45, 5, 5);
+                g.fillRect(smiley_x + 45, smiley_y + 45, 5, 5);
+                g.fillRect(smiley_x + 25, smiley_y + 45, 20, 4);
+            }
+
         }
     }
+
     public class Move implements MouseMotionListener
     {
 
@@ -216,7 +239,7 @@ public class GUI extends JFrame {
             return -1;
         }
 
-        public boolean isNeighbour(int main_box_X, int main_box_Y, int side_box_X, int side_box_Y)
+        /*public boolean isNeighbour(int main_box_X, int main_box_Y, int side_box_X, int side_box_Y)
         {
 
             if(Math.abs(main_box_X - side_box_X) < 2 && Math.abs(main_box_Y - side_box_Y) < 2 && contains_mine[side_box_X][side_box_Y])
@@ -224,7 +247,7 @@ public class GUI extends JFrame {
                 return true;
             }
             return false;
-        }
+        }*/
 
     }
 
