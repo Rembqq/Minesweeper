@@ -7,7 +7,7 @@ import java.awt.event.MouseMotionListener;
 import java.util.*;
 
 public class GUI extends JFrame {
-    int margins = 8;
+    int margins = 5;
     int top_padding = 30;
     int mx = 0;
     int my = 0;
@@ -16,11 +16,14 @@ public class GUI extends JFrame {
 
     //arrays
     boolean[][] contains_mine = new boolean[16][9];
+    Color[] num_colours = new Color[] {Color.BLUE, new Color(33, 156, 41), new Color(122, 108, 91), new Color(0, 0, 128),
+                                       new Color(64, 49, 11), new Color(33, 131, 156),
+                                       Color.BLACK, new Color(17, 30, 33)};
     int[][] nearby_mines = new int[16][9];
     boolean[][] revealed = new boolean[16][9];
     boolean[][] flagged = new boolean[16][9];
 
-    int initial_mines = 50;
+    int initial_mines = 75;
 
     public GUI()
     {
@@ -91,14 +94,14 @@ public class GUI extends JFrame {
                     g.setColor(Color.GRAY);
                     if(contains_mine[i][j])
                     {
-                        g.setColor(Color.YELLOW);
+                        g.setColor(new Color(176, 108, 40));
                     }
                     if(revealed[i][j])
                     {
-                        g.setColor(Color.white);
+                        g.setColor(new Color(175, 186, 189));
                         if(contains_mine[i][j])
                         {
-                            g.setColor(Color.red);
+                            g.setColor(new Color(176, 108, 40));
                         }
                     }
                     if(mx >= margins * 2 + 80 * i &&
@@ -114,14 +117,18 @@ public class GUI extends JFrame {
                     //again revealed[i][j] as we can't change a colour from a single condition
                     if(revealed[i][j])
                     {
-                        g.setColor(Color.black);
-                        if(!contains_mine[i][j])
+
+                        if(!contains_mine[i][j] && nearby_mines[i][j] != 0)
                         {
-                            g.setFont(new Font("Tahoma", Font.BOLD, 40));
-                            g.drawString(Integer.toString(nearby_mines[i][j]), 20 + margins + 80 * i, top_padding + 25 + 80 * (j+1));
+                            g.setColor(num_colours[nearby_mines[i][j] - 1]);
+                            g.setFont(new Font("Tahoma", Font.BOLD, 45));
+                            g.drawString(Integer.toString(nearby_mines[i][j]), 18 + margins + 80 * i, top_padding + margins + 22 + 80 * (j+1));
                         }
                         else {
-                            g.fillOval(i * 80 + margins + 11, j * 80 + 80 + top_padding - 10, 40, 40);
+                            g.setColor(Color.BLACK);
+                            g.fillOval(i * 80 + margins + 12, j * 80 + 80 + top_padding - 10, 40, 40);
+                            g.fillRect(i * 80 + margins + 30, j * 80 + 80 + top_padding - 17, 4, 56);
+                            g.fillRect(i * 80 + margins + 5, j * 80 + 80 + top_padding + 10, 56, 4);
                         }
                     }
 
