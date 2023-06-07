@@ -7,6 +7,10 @@ import java.awt.event.MouseMotionListener;
 import java.util.*;
 
 public class GUI extends JFrame {
+
+    Date startDate = new Date();
+
+
     int margins = 5;
     int top_padding = 30;
     public int mx = 0;
@@ -14,6 +18,12 @@ public class GUI extends JFrame {
 
     public int smiley_x = 605;
     public int smiley_y = 5;
+
+    public int timer_X = 1120;
+    public int timer_Y = 5;
+
+    public int sec = 0;
+    public int min = 0;
 
     public boolean happy_face = false;
 
@@ -156,6 +166,31 @@ public class GUI extends JFrame {
                 g.fillRect(smiley_x + 25, smiley_y + 45, 20, 4);
             }
 
+            // timer panel
+            g.setColor(Color.BLACK);
+            g.fillRect(timer_X, timer_Y, 170, 80 - margins);
+            sec = (int)((new Date().getTime() - startDate.getTime()) / 1000);
+            if(sec > 999)
+            {
+                sec = 999;
+            }
+
+            g.setColor(Color.RED);
+            g.setFont(new Font("Century Schoolbook", Font.PLAIN, 80));
+
+            if(sec < 10)
+            {
+                g.drawString("00" + Integer.toString(sec), timer_X + 15, timer_Y + 65);
+            }
+
+            else if(sec < 100){
+                g.drawString( "0" + Integer.toString(sec), timer_X + 15, timer_Y + 65);
+            }
+            else {
+                g.drawString(Integer.toString(sec), timer_X + 15, timer_Y + 65);
+            }
+
+            //System.out.println(sec);
         }
     }
 
