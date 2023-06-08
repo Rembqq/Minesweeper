@@ -8,8 +8,9 @@ import java.util.*;
 
 public class GUI extends JFrame {
 
-    Date startDate = new Date();
+    public boolean resetter = false;
 
+    Date startDate = new Date();
 
     int margins = 5;
     int top_padding = 30;
@@ -46,6 +47,7 @@ public class GUI extends JFrame {
     boolean[][] flagged = new boolean[16][9];
 
     int initial_mines = 40;
+    int user_mines_left = initial_mines;
 
     public GUI()
     {
@@ -59,38 +61,7 @@ public class GUI extends JFrame {
 
         int marked_mines = 0;
         int decreased_chance = 0;
-        for(int i = 0; i < 16; ++i)
-        {
-            for(int j = 0; j < 9; ++j)
-            {
-                // calculating left bomb_chance
-                contains_mine[i][j] = (rand.nextInt(16 * 9 - decreased_chance)  < initial_mines - marked_mines);
-                if(contains_mine[i][j]) {marked_mines++;}
-                decreased_chance++;
-                revealed[i][j] = false;
-                nearby_mines[i][j] = 0;
-                flagged[i][j] = false;
-            }
-        }
-
-        for(int i = 0; i < 16; ++i)
-        {
-            for(int j = 0; j < 9; ++j)
-            {
-
-                for(int m = i - 1; m <= i + 1; ++m)
-                {
-                    for(int n = j - 1; n <= j + 1; ++n)
-                    {
-                        if (n == -1 || m == -1 || m == 16 || n == 9 || (i == m && j == n) ) { continue;}
-                        if(contains_mine[m][n])
-                        {
-                            nearby_mines[i][j]++;
-                        }
-                    }
-                }
-            }
-        }
+        resetAll();
 
         Board board = new Board();
         this.setContentPane(board);
@@ -177,13 +148,19 @@ public class GUI extends JFrame {
             // timer panel
             g.setColor(Color.BLACK);
             g.fillRect(timer_X, timer_Y, 170, 80 - margins);
-            sec = (int)((new Date().getTime() - startDate.getTime()) / 1000);
+            if(!defeat && !victory)
+            {
+                sec = (int)((new Date().getTime() - startDate.getTime()) / 1000);
+            }
             if(sec > 999)
             {
                 sec = 999;
             }
-
             g.setColor(Color.RED);
+            if(victory) {
+                g.setColor(Color.green);
+            }
+
             g.setFont(new Font("Century Schoolbook", Font.PLAIN, 80));
 
             if(sec < 10)
@@ -256,30 +233,6 @@ public class GUI extends JFrame {
 
         }
 
-        public void resetAll()
-        {
-            startDate = new Date();
-
-            happy_face = true;
-            victory = false;
-            defeat = false;
-            int marked_mines = 0;
-            int decreased_chance = 0;
-            for(int i = 0; i < 16; ++i)
-            {
-                for(int j = 0; j < 9; ++j)
-                {
-                    // calculating left bomb_chance
-                    contains_mine[i][j] = (rand.nextInt(16 * 9 - decreased_chance)  < initial_mines - marked_mines);
-                    if(contains_mine[i][j]) {marked_mines++;}
-                    decreased_chance++;
-                    revealed[i][j] = false;
-                    nearby_mines[i][j] = 0;
-                    flagged[i][j] = false;
-                }
-            }
-        }
-
         public boolean inSmiley()
         {
             int diff = (int)Math.sqrt(Math.abs(mx - smileyCenter_X) * Math.abs(mx - smileyCenter_X) +
@@ -324,6 +277,102 @@ public class GUI extends JFrame {
             return false;
         }*/
 
+    }
+
+    public void checkVictory()
+    {
+        for(int i = 0; i < 16; ++i)
+        {
+            for(int j = 0; j < 9; ++j)
+            {
+                if (revealed[i][j] && contains_mine[i][j])
+                {
+                    defeat = true;
+                    happy_face = false;
+
+                }
+            }
+        }
+        if(totalBoxesRevealed() + initial_mines == 144)
+        {
+            victory = true;
+
+        }
+    }
+
+    public void userMinesLeft()
+    {
+        for(int i = 0; i < 16; ++i)
+        {
+            for(int j = 0; j < 9; ++j)
+            {
+                if (flagged[i][j])
+                {
+                    user_mines_left--;
+                }
+            }
+        }
+    }
+
+    public int totalBoxesRevealed()
+    {
+        int total = 0;
+        for(int i = 0; i < 16; ++i)
+        {
+            for(int j = 0; j < 9; ++j)
+            {
+                if (revealed[i][j])
+                {
+                    total++;
+                }
+            }
+        }
+        return total;
+    }
+
+    public void resetAll()
+    {
+
+        resetter = true;
+        startDate = new Date();
+
+        happy_face = true;
+        victory = false;
+        defeat = false;
+        int marked_mines = 0;
+        int decreased_chance = 0;
+        for(int i = 0; i < 16; ++i)
+        {
+            for(int j = 0; j < 9; ++j)
+            {
+                // calculating left bomb_chance
+                contains_mine[i][j] = (rand.nextInt(16 * 9 - decreased_chance)  < initial_mines - marked_mines);
+                if(contains_mine[i][j]) {marked_mines++;}
+                decreased_chance++;
+                revealed[i][j] = false;
+                nearby_mines[i][j] = 0;
+                flagged[i][j] = false;
+            }
+        }
+        for(int i = 0; i < 16; ++i)
+        {
+            for(int j = 0; j < 9; ++j)
+            {
+
+                for(int m = i - 1; m <= i + 1; ++m)
+                {
+                    for(int n = j - 1; n <= j + 1; ++n)
+                    {
+                        if (n == -1 || m == -1 || m == 16 || n == 9 || (i == m && j == n) ) { continue;}
+                        if(contains_mine[m][n])
+                        {
+                            nearby_mines[i][j]++;
+                        }
+                    }
+                }
+            }
+        }
+        resetter = false;
     }
 
 
