@@ -19,26 +19,33 @@ public class GUI extends JFrame {
     public int smiley_x = 605;
     public int smiley_y = 5;
 
+    public int smileyCenter_X = smiley_x + 35;
+    public int smileyCenter_Y = smiley_y + 35;
+
     public int timer_X = 1120;
     public int timer_Y = 5;
 
     public int sec = 0;
     public int min = 0;
 
-    public boolean happy_face = false;
+    public boolean happy_face = true;
+
+    public boolean victory = false;
+    public boolean defeat = false;
+
 
     Random rand = new Random();
 
     //arrays
     boolean[][] contains_mine = new boolean[16][9];
     Color[] num_colours = new Color[] {Color.BLUE, new Color(33, 156, 41), new Color(122, 108, 91), new Color(0, 0, 128),
-                                       new Color(64, 49, 11), new Color(33, 131, 156),
-                                       Color.BLACK, new Color(17, 30, 33)};
+            new Color(64, 49, 11), new Color(33, 131, 156),
+            Color.BLACK, new Color(17, 30, 33)};
     int[][] nearby_mines = new int[16][9];
     boolean[][] revealed = new boolean[16][9];
     boolean[][] flagged = new boolean[16][9];
 
-    int initial_mines = 75;
+    int initial_mines = 40;
 
     public GUI()
     {
@@ -62,6 +69,7 @@ public class GUI extends JFrame {
                 decreased_chance++;
                 revealed[i][j] = false;
                 nearby_mines[i][j] = 0;
+                flagged[i][j] = false;
             }
         }
 
@@ -103,9 +111,9 @@ public class GUI extends JFrame {
             for (int i = 0; i < 16; ++i) {
                 for (int j = 0; j < 9; ++j) {
                     g.setColor(Color.GRAY);
-                    if (contains_mine[i][j]) {
+                    /*if (contains_mine[i][j]) {
                         g.setColor(new Color(176, 108, 40));
-                    }
+                    }*/
                     /*if (contains_mine[i][j]) {
                         g.setColor(new Color(245, 29, 90));
                     }*/
@@ -131,7 +139,7 @@ public class GUI extends JFrame {
                             g.setColor(num_colours[nearby_mines[i][j] - 1]);
                             g.setFont(new Font("Tahoma", Font.BOLD, 45));
                             g.drawString(Integer.toString(nearby_mines[i][j]), 18 + margins + 80 * i, top_padding + margins + 22 + 80 * (j + 1));
-                        } else {
+                        } else if(contains_mine[i][j]){
                             g.setColor(Color.BLACK);
                             g.fillOval(i * 80 + margins + 12, j * 80 + 80 + top_padding - 10, 40, 40);
                             g.fillRect(i * 80 + margins + 30, j * 80 + 80 + top_padding - 17, 4, 56);
@@ -221,11 +229,11 @@ public class GUI extends JFrame {
                 revealed[inBoxX()][inBoxY()] = true;
                 System.out.println("Row: " + row + ", Col: " + col + " Neighbour mines: " + nearby_mines[inBoxX()][inBoxY()]);
             }
-
-            /*if(row != -1 && col != -1)
+            if(inSmiley())
             {
-                System.out.println("Row: " + inBoxY() + ", Col: " + inBoxX());
-            }*/
+                resetAll();
+                /*System.out.println("In smiley");*/
+            }
         }
 
         @Override
@@ -240,13 +248,45 @@ public class GUI extends JFrame {
 
         @Override
         public void mouseEntered(MouseEvent e) {
-            
+
         }
 
         @Override
         public void mouseExited(MouseEvent e) {
 
         }
+
+        public void resetAll()
+        {
+            startDate = new Date();
+
+            happy_face = true;
+            victory = false;
+            defeat = false;
+            int marked_mines = 0;
+            int decreased_chance = 0;
+            for(int i = 0; i < 16; ++i)
+            {
+                for(int j = 0; j < 9; ++j)
+                {
+                    // calculating left bomb_chance
+                    contains_mine[i][j] = (rand.nextInt(16 * 9 - decreased_chance)  < initial_mines - marked_mines);
+                    if(contains_mine[i][j]) {marked_mines++;}
+                    decreased_chance++;
+                    revealed[i][j] = false;
+                    nearby_mines[i][j] = 0;
+                    flagged[i][j] = false;
+                }
+            }
+        }
+
+        public boolean inSmiley()
+        {
+            int diff = (int)Math.sqrt(Math.abs(mx - smileyCenter_X) * Math.abs(mx - smileyCenter_X) +
+                       Math.abs(my - smileyCenter_Y) * Math.abs(my - smileyCenter_Y));
+            return diff <= 35;
+        }
+
 
         public int inBoxX()
         {
