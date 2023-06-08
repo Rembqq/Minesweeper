@@ -11,7 +11,7 @@ public class GUI extends JFrame {
     public boolean resetter = false;
 
     Date startDate = new Date();
-
+    Date endDate;
     int margins = 5;
     int top_padding = 30;
     public int mx = 0;
@@ -25,6 +25,10 @@ public class GUI extends JFrame {
 
     public int timer_X = 1120;
     public int timer_Y = 5;
+
+    String GameResMess = "";
+    public int VicMessage_X = 15;
+    public int VicMessage_Y = -50;
 
     public int sec = 0;
     public int min = 0;
@@ -175,7 +179,28 @@ public class GUI extends JFrame {
                 g.drawString(Integer.toString(sec), timer_X + 15, timer_Y + 65);
             }
 
-            //System.out.println(sec);
+            // Victory message
+
+            if(victory)
+            {
+                g.setColor(Color.green);
+                GameResMess = "Congrats! YOU WIN!";
+            } else if(defeat)
+            {
+                g.setColor(Color.red);
+                GameResMess = "YOU LOSE";
+            }
+
+            if(victory || defeat)
+            {
+                 VicMessage_Y = -50 + (int)(new Date().getTime() - endDate.getTime()) / 10;
+                 if(VicMessage_Y > 60)
+                 {
+                     VicMessage_Y = 60;
+                 }
+                 g.setFont(new Font("Sitka Text", Font.PLAIN, 60));
+                g.drawString(GameResMess, VicMessage_X, VicMessage_Y);
+            }
         }
     }
 
@@ -189,9 +214,7 @@ public class GUI extends JFrame {
 
         @Override
         public void mouseMoved(MouseEvent e) {
-            mx = e.getX();
-            my = e.getY();
-            //System.out.println("X: " + mx +  ", Y: " + my);
+
         }
     }
 
@@ -199,12 +222,14 @@ public class GUI extends JFrame {
     {
         @Override
         public void mouseClicked(MouseEvent e) {
+            mx = e.getX();
+            my = e.getY();
             int row = inBoxY();
             int col = inBoxX();
             if (row != -1 && col != -1)
             {
                 revealed[inBoxX()][inBoxY()] = true;
-                System.out.println("Row: " + row + ", Col: " + col + " Neighbour mines: " + nearby_mines[inBoxX()][inBoxY()]);
+                //System.out.println("Row: " + row + ", Col: " + col + " Neighbour mines: " + nearby_mines[inBoxX()][inBoxY()]);
             }
             if(inSmiley())
             {
@@ -267,36 +292,25 @@ public class GUI extends JFrame {
             return -1;
         }
 
-        /*public boolean isNeighbour(int main_box_X, int main_box_Y, int side_box_X, int side_box_Y)
-        {
-
-            if(Math.abs(main_box_X - side_box_X) < 2 && Math.abs(main_box_Y - side_box_Y) < 2 && contains_mine[side_box_X][side_box_Y])
-            {
-                return true;
-            }
-            return false;
-        }*/
-
     }
 
     public void checkVictory()
     {
-        for(int i = 0; i < 16; ++i)
-        {
-            for(int j = 0; j < 9; ++j)
-            {
-                if (revealed[i][j] && contains_mine[i][j])
-                {
-                    defeat = true;
-                    happy_face = false;
-
+        if(!defeat) {
+            for (int i = 0; i < 16; ++i) {
+                for (int j = 0; j < 9; ++j) {
+                    if (revealed[i][j] && contains_mine[i][j]) {
+                        defeat = true;
+                        happy_face = false;
+                        endDate = new Date();
+                    }
                 }
             }
         }
-        if(totalBoxesRevealed() + initial_mines == 144)
+        if(totalBoxesRevealed() + initial_mines >= 144 && !victory)
         {
             victory = true;
-
+            endDate = new Date();
         }
     }
 
@@ -335,6 +349,8 @@ public class GUI extends JFrame {
 
         resetter = true;
         startDate = new Date();
+
+        VicMessage_Y = -300;
 
         happy_face = true;
         victory = false;

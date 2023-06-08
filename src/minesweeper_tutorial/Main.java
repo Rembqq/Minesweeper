@@ -15,7 +15,7 @@ public class Main implements Runnable {
             if(!gui.resetter)
             {
                 gui.checkVictory();
-                System.out.println("Victory: " + gui.victory + ", Defeat: " + gui.defeat);
+                //System.out.println("Victory: " + gui.victory + ", Defeat: " + gui.defeat);
             }
         }
     }
