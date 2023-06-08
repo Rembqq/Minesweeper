@@ -25,7 +25,7 @@ public class GUI extends JFrame {
     public int sec = 0;
     public int min = 0;
 
-    public boolean happy_face = false;
+    public boolean happy_face = true;
 
     Random rand = new Random();
 
@@ -103,9 +103,9 @@ public class GUI extends JFrame {
             for (int i = 0; i < 16; ++i) {
                 for (int j = 0; j < 9; ++j) {
                     g.setColor(Color.GRAY);
-                    if (contains_mine[i][j]) {
+                    /*if (contains_mine[i][j]) {
                         g.setColor(new Color(176, 108, 40));
-                    }
+                    }*/
                     /*if (contains_mine[i][j]) {
                         g.setColor(new Color(245, 29, 90));
                     }*/
